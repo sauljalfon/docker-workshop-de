@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import click
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
@@ -29,19 +30,17 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-def run():
-    year = 2021
-    month = 1
-
-    pg_user = "root"
-    pg_password = "root"
-    pg_host = "localhost"
-    pg_port = 5432
-    pg_db = "ny_taxi"
-
-    chunk_size = 100000
-
-    target_table = "yellow_taxi_data"
+@click.command()
+@click.option('--year', default=2021, type=int, help='Year of the trip data.')
+@click.option('--month', default=1, type=int, help='Month of the trip data.')
+@click.option('--pg-user', default='root', help='PostgreSQL username.')
+@click.option('--pg-password', default='root', help='PostgreSQL password.')
+@click.option('--pg-host', default='localhost', help='PostgreSQL host.')
+@click.option('--pg-port', default=5432, type=int, help='PostgreSQL port.')
+@click.option('--pg-db', default='ny_taxi', help='PostgreSQL database name.')
+@click.option('--chunk-size', default=100000, type=int, help='Number of rows per chunk.')
+@click.option('--target-table', default='yellow_taxi_data', help='Target table name.')
+def run(year, month, pg_user, pg_password, pg_host, pg_port, pg_db, chunk_size, target_table):
 
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     url = f"{prefix}/yellow_tripdata_{year}-{month:02d}.csv.gz"
@@ -74,4 +73,4 @@ def run():
         )
 
 if __name__ == "__main__":
-    run()
+    run()  # click handles the arguments automatically
